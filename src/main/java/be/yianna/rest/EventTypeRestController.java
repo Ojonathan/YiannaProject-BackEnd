@@ -25,9 +25,21 @@ public class EventTypeRestController {
     public ResponseEntity<?> addEventType(@RequestBody EventType eventType) {
         try{
             eventTypeService.addEventType(eventType);
-            return new ResponseEntity<String>("Success du l'ajout d'un type d'événement", HttpStatus.OK);
+            return new ResponseEntity<>("Success du l'ajout d'un type d'événement", HttpStatus.OK);
         }catch (Exception ex) {
-            return new ResponseEntity<String>("Erreur lors de l'ajout d'un type d'événement : " + ex.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Erreur lors de l'ajout d'un type d'événement : " + ex.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    // Only Admin can delete Event
+    @DeleteMapping("/{id}" )
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
+        try{
+            eventTypeService.deleteEventTypeById(id);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        }catch (Exception ex) {
+            return new ResponseEntity<>("Erreur lors de la suppresion d'un type d'événement : " + ex.getMessage(), HttpStatus.CONFLICT);
         }
     }
 }

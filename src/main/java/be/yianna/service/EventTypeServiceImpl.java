@@ -6,6 +6,7 @@ import be.yianna.repository.EventTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventTypeServiceImpl implements EventTypeService{
@@ -33,6 +34,9 @@ public class EventTypeServiceImpl implements EventTypeService{
 
     @Override
     public void deleteEventTypeById(Long id) {
-
+        Optional<EventType> resultat =  eventTypeRepository.findById(id);
+        if (resultat.isPresent()) {
+            eventTypeRepository.delete(resultat.get());
+        }
     }
 }
