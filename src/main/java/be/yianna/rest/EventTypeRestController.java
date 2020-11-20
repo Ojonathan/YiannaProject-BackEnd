@@ -1,11 +1,14 @@
 package be.yianna.rest;
 
+import be.yianna.domain.Event;
 import be.yianna.domain.EventType;
 import be.yianna.service.EventTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin // possible to specify settings
@@ -17,6 +20,12 @@ public class EventTypeRestController {
     // Autowired not required for only one Constructor
     public EventTypeRestController(EventTypeService eventTypeService) {
         this.eventTypeService = eventTypeService;
+    }
+
+    // TODO to improve and make it compatible with pagging
+    @GetMapping
+    public List<EventType> findAll() {
+        return eventTypeService.getAllEventTypes();
     }
 
     // Add new event type

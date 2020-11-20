@@ -1,5 +1,6 @@
 package be.yianna.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,5 +19,6 @@ public class EventType {
     private String type;
 
     @OneToMany(mappedBy = "type")
+    @JsonIgnore
     private List<Event> events;
 }

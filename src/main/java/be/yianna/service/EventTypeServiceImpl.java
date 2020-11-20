@@ -1,6 +1,5 @@
 package be.yianna.service;
 
-import be.yianna.domain.Event;
 import be.yianna.domain.EventType;
 import be.yianna.repository.EventTypeRepository;
 import org.springframework.stereotype.Service;
@@ -27,9 +26,10 @@ public class EventTypeServiceImpl implements EventTypeService{
         }
     }
 
+    // TODO to improve and make it compatible with pagging
     @Override
-    public List<Event> getAllEventTypes() {
-        return null;
+    public List<EventType> getAllEventTypes() {
+        return eventTypeRepository.findAll();
     }
 
     @Override
