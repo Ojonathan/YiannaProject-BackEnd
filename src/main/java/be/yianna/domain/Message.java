@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -15,11 +16,18 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String message;
     private Long owner;
     private Long receiver;
+    private String ownerName;
+    private String receiverName;
+
+    private String content;
+    private LocalDateTime timestamp;
+
+    @Enumerated(EnumType.ORDINAL)
+    private MessageStatus status; //enum in DataBase
 
     @ManyToOne
     @JsonIgnore
-    private Event event;
+    private Conversation conversation;
 }

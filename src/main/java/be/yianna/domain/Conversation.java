@@ -1,6 +1,7 @@
 package be.yianna.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,27 +10,22 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Setter
-@Getter
+@AllArgsConstructor
 @NoArgsConstructor
-public class Event {
+@Getter
+@Setter
+public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id_event;
-
-    private String name;
-    private String description;
-    private boolean carAvailable;
+    private String id;
 
     @ManyToOne
     @JsonIgnore
-    private User user;
+    private Event event;
 
-    @ManyToOne
-    @JsonIgnore
-    private TypeEvent type;
+    @OneToMany(mappedBy = "conversation")
+    private List<Message> messages;
 
-    @OneToMany(mappedBy = "event")
-    private List<Conversation> conversations;
-
+    private Long senderId;
+    private Long recipientId;
 }
