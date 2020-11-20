@@ -4,8 +4,6 @@ import be.yianna.domain.Event;
 import be.yianna.domain.User;
 import be.yianna.repository.EventRepository;
 import be.yianna.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;

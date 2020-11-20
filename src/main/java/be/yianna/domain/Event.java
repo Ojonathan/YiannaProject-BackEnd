@@ -27,7 +27,7 @@ public class Event {
 
     @ManyToOne
     @JsonIgnore
-    private TypeEvent type;
+    private EventType type;
 
     @OneToMany(mappedBy = "event")
     private List<Conversation> conversations;

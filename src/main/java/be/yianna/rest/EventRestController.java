@@ -1,9 +1,6 @@
 package be.yianna.rest;
 
 import be.yianna.domain.Event;
-import be.yianna.domain.User;
-import be.yianna.repository.EventRepository;
-import be.yianna.repository.UserRepository;
 import be.yianna.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin // possible to specify settings

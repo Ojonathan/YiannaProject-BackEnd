@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
-public class TypeEvent {
+public class EventType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id_type;
