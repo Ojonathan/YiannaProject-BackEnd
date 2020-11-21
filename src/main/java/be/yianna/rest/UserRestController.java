@@ -82,4 +82,14 @@ public class UserRestController {
             // throw new Exception("Exception lors de l'enregistrement de l'utlisateur : "+ex.getMessage());
         }
     }
+
+    @GetMapping("/checklogin")
+    public ResponseEntity<?> login(Principal user) {
+
+        if (user != null)
+            return new ResponseEntity<String>(user.getName() + ": Authenticated successfully", HttpStatus.OK);
+        else
+            return new ResponseEntity<String>("Please add your basic token in the Authorization Header",
+                    HttpStatus.UNAUTHORIZED);
+    }
 }
