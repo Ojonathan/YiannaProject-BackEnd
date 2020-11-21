@@ -14,7 +14,7 @@ import java.util.List;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long id_message;
 
     private Long owner;
     private Long receiver;

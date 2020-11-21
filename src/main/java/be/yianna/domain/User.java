@@ -14,7 +14,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id_user;
+    private Long id_user;
 
     @Column(unique = true)
     private String username;
@@ -23,7 +23,7 @@ public class User {
     private String password;
 
     private String description;
-    private int age;
+    private Integer age;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))

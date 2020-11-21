@@ -17,7 +17,7 @@ import java.util.List;
 public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Long id_conversation;
 
     @ManyToOne
     @JsonIgnore

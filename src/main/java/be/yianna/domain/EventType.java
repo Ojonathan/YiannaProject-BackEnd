@@ -13,7 +13,7 @@ import java.util.List;
 public class EventType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id_type;
+    private Long id_type;
 
     @Column(unique = true)
     private String type;
