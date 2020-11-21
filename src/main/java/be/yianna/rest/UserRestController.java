@@ -59,4 +59,27 @@ public class UserRestController {
             // throw new Exception("Exception lors de l'enregistrement de l'utlisateur : "+ex.getMessage());
         }
     }
+
+    @DeleteMapping("/user/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
+        // LOGGER.info(">>>>> RECU The username " + client.getUsername() + " - "+client.getPassword());
+        try {
+            Optional<User> resultUser = userRepository.findById(id);
+
+            // Tester si le nom d'utilisatur est déjà réservé
+            if (resultUser.isPresent()) {
+                // DELETE
+                userRepository.delete(resultUser.get());
+                return new ResponseEntity<String>("Success de la suppresion l'enregistrement", HttpStatus.ACCEPTED);
+            } else {
+                // User ne pas trouvé
+                return new ResponseEntity<String>("Username already taken: ", HttpStatus.CONFLICT);
+            }
+        } catch (Exception ex) {
+            //LOGGER.error("Exception lors de l'enregistrement de l'utlisateur:"+ ex);
+            return new ResponseEntity<String>("Erreur lors de l'enregistrement : " + ex.getMessage(), HttpStatus.CONFLICT);
+            // throw new Exception("Exception lors de l'enregistrement de l'utlisateur : "+ex.getMessage());
+        }
+    }
 }
