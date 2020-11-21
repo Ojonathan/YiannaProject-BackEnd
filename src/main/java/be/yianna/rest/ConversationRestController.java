@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin // possible to specify settings
-public class MessageRestController {
+public class ConversationRestController {
 }
