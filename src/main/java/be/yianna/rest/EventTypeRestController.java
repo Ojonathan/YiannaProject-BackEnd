@@ -5,7 +5,7 @@ import be.yianna.domain.EventType;
 import be.yianna.service.EventTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class EventTypeRestController {
 
     // Add new event type
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> addEventType(@RequestBody EventType eventType) {
         try{
             eventTypeService.addEventType(eventType);
@@ -42,7 +42,7 @@ public class EventTypeRestController {
 
     // Only Admin can delete Event
     @DeleteMapping("/{id}" )
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
         try{
             eventTypeService.deleteEventTypeById(id);

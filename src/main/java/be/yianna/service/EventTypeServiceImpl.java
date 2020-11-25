@@ -19,7 +19,7 @@ public class EventTypeServiceImpl implements EventTypeService{
     @Override
     public void addEventType(EventType eventType) {
         try {
-            // Synchroniser les objets persistants
+            // Synchronize persistent objects
             eventTypeRepository.save(eventType);
         } catch (Exception ex) {
 

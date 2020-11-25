@@ -15,7 +15,7 @@ import java.util.List;
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id_event;
+    private Long idEvent;
 
     private String name;
     private String description;
@@ -30,6 +30,14 @@ public class Event {
     private EventType type;
 
     @OneToMany(mappedBy = "event")
-    private List<Conversation> conversations;
+    @JsonIgnore
+    private List<Message> messages;
+
+    public Event(String name, String description, boolean carAvailable){
+        this.name = name;
+        this.description = description;
+        this.carAvailable = carAvailable;
+    }
+
 
 }

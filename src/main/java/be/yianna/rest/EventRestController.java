@@ -4,7 +4,7 @@ import be.yianna.domain.Event;
 import be.yianna.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -34,6 +34,7 @@ public class EventRestController {
         try{
             // Récupérer le client à partir du contexte de sécurité (via le raccourci principal) et lui ajouter l'offre
             String username = user.getName();
+
             eventService.addEvent(username,event);
             return new ResponseEntity<String>("Success du l'ajout d'un événement", HttpStatus.OK);
         }catch (Exception ex) {
@@ -60,7 +61,7 @@ public class EventRestController {
 
     // Only Admin can delete Event
     @DeleteMapping("/{id}" )
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
         try{
             eventService.deleteEventById(id);

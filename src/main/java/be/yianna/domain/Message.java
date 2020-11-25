@@ -1,12 +1,10 @@
 package be.yianna.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Setter
@@ -14,12 +12,13 @@ import java.util.List;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id_message;
+    private Long idMessage;
 
-    private Long owner;
-    private Long receiver;
-    private String ownerName;
-    private String receiverName;
+    private String chatId;
+    private Long senderId;
+    private Long recipientId;
+    private String senderName;
+    private String recipientName;
 
     private String content;
     private LocalDateTime timestamp;
@@ -28,6 +27,5 @@ public class Message {
     private MessageStatus status; //enum in DataBase
 
     @ManyToOne
-    @JsonIgnore
-    private Conversation conversation;
+    private Event event;
 }

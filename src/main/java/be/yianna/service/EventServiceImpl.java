@@ -24,18 +24,18 @@ public class EventServiceImpl implements EventService {
     @Override
     public void addEvent(String username, Event event) {
         try {
-            // Récupérer le Cient offrant
+            // Retrieve the user
             User user = userRepo.findByUsername(username);
 
-            // Ajouter le nouveau evenement à la liste des evenements de l'utilisateur
+            // Add the new event to the user's list of events
             List<Event> eventsuser = user.getEvents();
             eventsuser.add(event);
             user.setEvents(eventsuser);
 
-            // Ajouter l'utilisateur qui a publié l'evenement
+            // Add the user who published the event
             event.setUser(user);
 
-            // Synchroniser les objets persistants
+            // Add the user who published the event
             eventRepo.save(event);
         } catch (Exception ex) {
 
@@ -52,10 +52,10 @@ public class EventServiceImpl implements EventService {
     public List<Event> getAllEventsForUser(String username) {
         List<Event> eventsList = new LinkedList<>();
         try{
-            // Récupérer l'utilisateur par son username
+            // Retrieve the user by his username
             User user = userRepo.findByUsername(username);
 
-            // Récupérer tous les evenements d'un utilisateur
+            // Retrieve all of a user's events
             eventsList = eventRepo.findAllByUser(user);
         } catch (Exception ex) {
 

@@ -1,20 +1,26 @@
 package be.yianna.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Setter
+@Getter
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id_role;
+    private Long idRole;
 
     @Column(unique = true)
     private String role;
 
-    // @JsonIgnore
     @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<User> users;
 
     public Role() {
@@ -24,28 +30,4 @@ public class Role {
 		this.role = role;
 		this.users = users;
 	}
-
-	public long getId_role() {
-        return id_role;
-    }
-
-    public void setId_role(long id) {
-        this.id_role = id;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 }
