@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 //TODO Documentation
 public interface EventTypeRepository extends JpaRepository<EventType,Long> {
+    EventType findByType(String type);
+    EventType findByIdType(Long idType);
 }

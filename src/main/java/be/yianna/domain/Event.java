@@ -21,17 +21,24 @@ public class Event {
     private String description;
     private boolean carAvailable;
 
+    @Lob
+    private byte[] picture;
+    // Can I include image and date
+
     @ManyToOne
     @JsonIgnore
     private User user;
 
     @ManyToOne
-    @JsonIgnore
     private EventType type;
 
     @OneToMany(mappedBy = "event")
     @JsonIgnore
-    private List<Message> messages;
+    private List<Conversation> conversations;
+
+    //@OneToMany(mappedBy = "event")
+    //@JsonIgnore
+    //private List<Message> messages;
 
     public Event(String name, String description, boolean carAvailable){
         this.name = name;

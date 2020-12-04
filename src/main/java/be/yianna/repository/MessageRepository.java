@@ -1,5 +1,6 @@
 package be.yianna.repository;
 
+import be.yianna.domain.Conversation;
 import be.yianna.domain.Message;
 import be.yianna.domain.MessageStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,8 +14,13 @@ import java.util.Optional;
 
 //TODO Documentation
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    long countBySenderIdAndRecipientIdAndStatus(
-            Long senderId, Long recipientId, MessageStatus status);
+    long countBySenderNameAndRecipientNameAndStatus(
+            String senderName, String recipientName, MessageStatus status);
+
+    long countByConversationAndStatus(Conversation conversation, MessageStatus status);
+
+    long countByRecipientNameAndStatus(
+            String recipientName, MessageStatus status);
 
     List<Message> findByChatId(String chatId);
 
@@ -22,13 +28,17 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Transactional // By default (readOnly = false)
     @Modifying
-    @Query("update Message u set u.status = :status where u.senderId = :senderId and u.recipientId = :recipientId")
+    @Query("update Message u set u.status = :status where u.senderName = :senderName and u.recipientName = :recipientName")
     void updateMessages(@Param(value = "status") MessageStatus status,
-                        @Param(value = "senderId") Long senderId,
-                        @Param(value = "recipientId") Long recipientId
+                        @Param(value = "senderName") String senderName,
+                        @Param(value = "recipientName") String recipientName
                         );
 
-    Message findDistinctByChatId(String chatId);
+    Message findTopByChatId(String chatId);
+    //Message findDistinctByChatId(String chatId);
+
+    //@Query("select u.username from User u inner join u.events ar where ar.idEvent = :idEvent")
+    List<Message> findAllByConversation(Conversation conversation);
 
     boolean existsDistinctByChatId(String chatId);
 }

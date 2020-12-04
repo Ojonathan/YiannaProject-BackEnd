@@ -6,6 +6,7 @@ import be.yianna.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -32,56 +33,66 @@ public class MessageRestController {
     @SendTo("/topic/greetings")
     public String greeting(String message) throws Exception {
         Thread.sleep(1000); // simulated delay
+        System.out.println("Message received: " + message);
         return "Hello, " + message + "!";
     }
 
 
-    @MessageMapping("/chat") // envia notificacion de mensaje
+    @MessageMapping("/chat/{eventId}") // envia notificacion de mensaje
     //@SendToUser("/queue/messages")
-    @SendTo("/topic/greetings")
-    public String processMessage(@Payload Message message) {
+    public void processMessage(@Payload Message message,
+                               @DestinationVariable("eventId") Long eventId) {
         // si ya existe el chatId se lo envia, sino se crea uno nuevo (en el caso de una nueva conversacion)
         String chatId = messageService
-                .getChatId(message.getSenderId(),
-                        message.getRecipientId(),
-                        message.getEvent().getIdEvent(),
-                        true);
+                .getChatId(message.getSenderName(), message.getRecipientName(), eventId, true);
 
-        // indicar a message a que conversation pertenece
+        // set chatId
         message.setChatId(chatId);
 
-        // guardar message en la base de datos
+        // save message in the database
         Message saved = messageService.save(message);
 
-        System.out.println("Mensaje Guardado ....");
-        return "Mensaje Guardado ....";
+        System.out.println("Message Saved ....");
+        //return "Message Saved ....";
 
         // Respond to user with a notification
         // (message receiver, message destination , object to send)
-        /*messagingTemplate.convertAndSendToUser(
-                message.getRecipientId().toString(),
-                "/queue/messages",
+        /*messagingTemplate.convertAndSend(
+                "/user/" + message.getRecipientName() + "/queue/messages",
                 new ChatNotification(
                         saved.getIdMessage(),
                         saved.getSenderId(),
                         saved.getSenderName()));*/
+        messagingTemplate.convertAndSendToUser(
+                message.getRecipientName(),
+                "/queue/messages",
+                new ChatNotification(
+                        saved.getIdMessage(),
+                        saved.getSenderName()));
     }
 
-    // get total number of messages reveived
-    @GetMapping("/messages/{senderId}/{recipientId}/count")
-    public ResponseEntity<Long> countNewMessages(@PathVariable Long senderId, @PathVariable Long recipientId) {
+    // get total number of messages revieved for a conversation
+    @GetMapping("/messages/{senderName}/{recipientName}/count")
+    public ResponseEntity<Long> countNewMessagesConversation(@PathVariable String senderName, @PathVariable String recipientName) {
         return ResponseEntity
-                .ok(messageService.countNewMessages(senderId, recipientId));
+                .ok(messageService.countNewMessagesConversation(senderName, recipientName));
     }
 
-    // get all message by eventId, senderId, recipientId
-    @GetMapping("/messages/{eventId}/{senderId}/{recipientId}")
+    // get total number of messages revieved for a conversation
+    @GetMapping("/messages/{recipientName}/count")
+    public ResponseEntity<Long> countNewMessagesTotal(@PathVariable String recipientName) {
+        return ResponseEntity
+                .ok(messageService.countNewMessagesTotal(recipientName));
+    }
+
+    // get all messages by Conversation(by eventId, senderId, recipientId)
+    @GetMapping("/messages/{eventId}/{senderName}/{recipientName}")
     public ResponseEntity<?> findChatMessages ( @PathVariable Long eventId,
-                                                @PathVariable Long senderId,
-                                                @PathVariable Long recipientId
+                                                @PathVariable String senderName,
+                                                @PathVariable String recipientName
                                                 ) {
         return ResponseEntity
-                .ok(messageService.findChatMessages(senderId, recipientId, eventId));
+                .ok(messageService.findChatMessages(senderName, recipientName, eventId));
     }
 
     // get a specific message and change its status value to DELIVERED

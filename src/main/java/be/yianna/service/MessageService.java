@@ -1,7 +1,11 @@
 package be.yianna.service;
 
+import be.yianna.domain.Conversation;
+import be.yianna.domain.Event;
 import be.yianna.domain.Message;
 import be.yianna.domain.MessageStatus;
+import be.yianna.repository.ConversationRepository;
+import be.yianna.repository.EventRepository;
 import be.yianna.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,15 +17,21 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    public String getChatId(Long senderId, Long recipientId, Long eventId, boolean createIfNotExist) {
+    @Autowired
+    private ConversationRepository conversationRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    public String getChatId(String senderName, String recipientName, Long eventId, boolean createIfNotExist) {
         // check if a chatId exists, otherwise use createIfNoExist to create new chatId
-        String generatedChatId = String.format("%s_%s_%s", eventId, senderId, recipientId);
+        String generatedChatId = String.format("%s_%s_%s", eventId, senderName, recipientName);
         if(messageRepository.existsDistinctByChatId(generatedChatId)){
-            return messageRepository.findDistinctByChatId(generatedChatId).getChatId();
+            return messageRepository.findTopByChatId(generatedChatId).getChatId();
         } else {
-            generatedChatId = String.format("%s_%s_%s", eventId, recipientId, senderId);
+            generatedChatId = String.format("%s_%s_%s", eventId, recipientName, senderName);
             if(messageRepository.existsDistinctByChatId(generatedChatId)){
-                return messageRepository.findDistinctByChatId(generatedChatId).getChatId();
+                return messageRepository.findTopByChatId(generatedChatId).getChatId();
             } else {
                 if(createIfNotExist) {
                     return generatedChatId;
@@ -33,18 +43,30 @@ public class MessageService {
 
     public Message save(Message message) {
         message.setStatus(MessageStatus.RECEIVED);
+
         messageRepository.save(message);
         return message;
     }
 
-    public long countNewMessages(Long senderId, Long recipientId) {
-        return messageRepository.countBySenderIdAndRecipientIdAndStatus(
-                senderId, recipientId, MessageStatus.RECEIVED);
+    //public long countNewMessagesByConversation( senderName, String recipientName) {
+    //
+    //    return messageRepository.countByConversationAndStatus(,MessageStatus.RECEIVED)
+    //            senderName, recipientName, MessageStatus.RECEIVED);
+    //}
+
+    public long countNewMessagesConversation(String senderName, String recipientName) {
+        return messageRepository.countBySenderNameAndRecipientNameAndStatus(
+                senderName, recipientName, MessageStatus.RECEIVED);
     }
 
-    public List<Message> findChatMessages(Long senderId, Long recipientId, Long eventId) {
+    public long countNewMessagesTotal(String recipientName) {
+        return messageRepository.countByRecipientNameAndStatus(
+                recipientName, MessageStatus.RECEIVED);
+    }
+
+    public List<Message> findChatMessages(String senderName, String recipientName, Long eventId) {
         // why null ChatId ?
-        String chatId = getChatId(senderId, recipientId, eventId ,false);
+        String chatId = getChatId(senderName, recipientName, eventId ,false);
         //Optional<String> chatId = chatRoomService.getChatId(senderId, recipientId, false);
 
         // find messages using chatId
@@ -53,15 +75,15 @@ public class MessageService {
         System.out.println("Found Messages ...." + messages.size());
 
         if(messages.size() > 0) {
-            updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
+            updateStatuses(senderName, recipientName, MessageStatus.DELIVERED);
         }
 
         return messages;
     }
 
     // Update status for all messages matching senderId and recipientId
-    public void updateStatuses(Long senderId, Long recipientId, MessageStatus status) {
-        messageRepository.updateMessages(status, senderId,recipientId);
+    public void updateStatuses(String senderName, String recipientName, MessageStatus status) {
+        messageRepository.updateMessages(status, senderName,recipientName);
     }
 
     // Search a message and change its status

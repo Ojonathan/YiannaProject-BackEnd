@@ -1,8 +1,10 @@
 package be.yianna.service;
 
 import be.yianna.domain.Event;
+import be.yianna.domain.EventType;
 import be.yianna.domain.User;
 import be.yianna.repository.EventRepository;
+import be.yianna.repository.EventTypeRepository;
 import be.yianna.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,14 @@ import java.util.Optional;
 public class EventServiceImpl implements EventService {
     private EventRepository eventRepo;
     private UserRepository userRepo;
+    private EventTypeRepository eventTypeRepo;
 
     public EventServiceImpl(UserRepository userRepo,
-                            EventRepository eventRepo) {
+                            EventRepository eventRepo,
+                            EventTypeRepository eventTypeRepo) {
         this.userRepo = userRepo;
         this.eventRepo = eventRepo;
+        this.eventTypeRepo = eventTypeRepo;
     }
 
     @Override
@@ -48,6 +53,22 @@ public class EventServiceImpl implements EventService {
         return eventRepo.findAll();
     }
 
+    // TODO to improve and make it compatible with pagging
+    @Override
+    public List<Event> getAllEventsByEventType(Long idType){
+        List<Event> eventsList = new LinkedList<>();
+        try{
+            // Retrieve the eventype by his idType
+            EventType eventType = eventTypeRepo.findByIdType(idType);
+
+            // Retrieve all of a user's events
+            eventsList = eventRepo.findAllByType(eventType);
+        } catch (Exception ex) {
+
+        }
+        return eventsList;
+    }
+
     @Override
     public List<Event> getAllEventsForUser(String username) {
         List<Event> eventsList = new LinkedList<>();
@@ -70,4 +91,10 @@ public class EventServiceImpl implements EventService {
             eventRepo.delete(resultat.get());
         }
     }
+
+    @Override
+    public String getAuthor(Long idEvent){
+        return eventRepo.getAuthorEvent(idEvent);
+    }
+
 }

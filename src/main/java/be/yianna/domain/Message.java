@@ -1,5 +1,6 @@
 package be.yianna.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,8 +16,9 @@ public class Message {
     private Long idMessage;
 
     private String chatId;
-    private Long senderId;
-    private Long recipientId;
+
+    //private Long senderId;
+    //private Long recipientId;
     private String senderName;
     private String recipientName;
 
@@ -27,5 +29,10 @@ public class Message {
     private MessageStatus status; //enum in DataBase
 
     @ManyToOne
-    private Event event;
+    @JsonIgnore
+    private Conversation conversation;
+
+    //@ManyToOne
+    //@JsonIgnore
+    //private Event event;
 }

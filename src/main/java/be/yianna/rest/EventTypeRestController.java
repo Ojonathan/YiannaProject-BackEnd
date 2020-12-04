@@ -2,6 +2,7 @@ package be.yianna.rest;
 
 import be.yianna.domain.Event;
 import be.yianna.domain.EventType;
+import be.yianna.service.EventService;
 import be.yianna.service.EventTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,15 @@ import java.util.List;
 public class EventTypeRestController {
 
     private EventTypeService eventTypeService;
+    private EventService eventService;
+
 
     // Autowired not required for only one Constructor
-    public EventTypeRestController(EventTypeService eventTypeService) {
+    public EventTypeRestController(EventTypeService eventTypeService,
+                                   EventService eventService
+    ) {
         this.eventTypeService = eventTypeService;
+        this.eventService = eventService;
     }
 
     // TODO to improve and make it compatible with pagging
@@ -27,6 +33,12 @@ public class EventTypeRestController {
     public List<EventType> findAll() {
         return eventTypeService.getAllEventTypes();
     }
+
+    @GetMapping("/{idEventType}/events")
+    public List<Event> findAllByEventType(@PathVariable("idEventType") Long idEventType){
+        return eventService.getAllEventsByEventType(idEventType);
+    }
+
 
     // Add new event type
     @PostMapping

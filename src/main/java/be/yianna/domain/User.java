@@ -1,5 +1,6 @@
 package be.yianna.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,17 +20,20 @@ public class User {
     @Column(unique = true)
     private String username;
 
-    // @JsonIgnore
+    @JsonIgnore
     private String password;
 
     private String description;
     private Integer age;
+    // can I include avatar and email
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonIgnore
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Event> events;
 
     public User() {

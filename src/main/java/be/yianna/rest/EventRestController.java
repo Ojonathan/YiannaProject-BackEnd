@@ -3,6 +3,7 @@ package be.yianna.rest;
 import be.yianna.domain.Event;
 import be.yianna.service.EventService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,11 @@ public class EventRestController {
         return eventService.getAllEvents();
     }
 
-    // Add new event
-    @PostMapping
-    public ResponseEntity<?> addEvent(@RequestBody Event event, Principal user) {
+
+    // Add new event using Principal
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addEvent(@RequestBody Event event,
+                                      Principal user) {
         try{
             // Récupérer le client à partir du contexte de sécurité (via le raccourci principal) et lui ajouter l'offre
             String username = user.getName();
@@ -42,7 +45,22 @@ public class EventRestController {
         }
     }
 
-    // Get all events
+    // Add new event
+    @PostMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addEvent(@RequestBody Event event,
+                                      @PathVariable("username") String username) {
+        try{
+            // Récupérer le client à partir du contexte de sécurité (via le raccourci principal) et lui ajouter l'offre
+            //String username = user.getName();
+
+            eventService.addEvent(username,event);
+            return new ResponseEntity<String>("Success du l'ajout d'un événement", HttpStatus.OK);
+        }catch (Exception ex) {
+            return new ResponseEntity<String>("Erreur lors de l'ajout d'un événement : " + ex.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    // Get all events using Principal
     @GetMapping("/me")
     public ResponseEntity<?> getAllMyEvents(Principal user) {
         try {
@@ -58,6 +76,20 @@ public class EventRestController {
             return new ResponseEntity<String>("Erreur lors de la recuperation de mes evenements : " + ex.getMessage(), HttpStatus.CONFLICT);
         }
     }
+
+    @GetMapping(value = "/{idEvent}/author")
+    public ResponseEntity<?> getAuthor(@PathVariable("idEvent") Long idEvent){
+        try {
+            String author = eventService.getAuthor(idEvent);
+            return (author == null)?
+                    new ResponseEntity<>(HttpStatus.NOT_FOUND):
+                    new ResponseEntity<String>(author, HttpStatus.OK);
+
+        } catch (Exception ex) {
+            return new ResponseEntity<String>("Erreur lors de la recuperation de mes evenements : " + ex.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
 
     // Only Admin can delete Event
     @DeleteMapping("/{id}" )

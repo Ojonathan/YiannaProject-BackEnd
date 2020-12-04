@@ -21,7 +21,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         // These are endpoints the client can subscribes to.
-        config.enableSimpleBroker( "/topic/", "/queue/");
+        config.enableSimpleBroker( "/topic", "/user");
+        //config.setUserDestinationPrefix("/user");
         // topic and queue. They follow the convention that destinations for messages to be carried
         // on to all subscribed clients via the pub-sub model should be prefixed with topic.
         // On the other hand, destinations for private messages are typically prefixed by queue.
@@ -36,6 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // Handshake endpoint
         registry
                 .addEndpoint("/ws")
+                .setAllowedOrigins("http://localhost:4200")
                 .withSockJS();
     }
 }
