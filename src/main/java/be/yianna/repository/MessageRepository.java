@@ -17,12 +17,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     long countBySenderNameAndRecipientNameAndStatus(
             String senderName, String recipientName, MessageStatus status);
 
-    long countByConversationAndStatus(Conversation conversation, MessageStatus status);
+    //long countByConversationAndStatus(Conversation conversation, MessageStatus status);
 
     long countByRecipientNameAndStatus(
             String recipientName, MessageStatus status);
 
-    List<Message> findByChatId(String chatId);
+    //List<Message> findByChatId(String chatId);
 
     Message findByIdMessage(Long idMessage);
 
@@ -34,11 +34,18 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                         @Param(value = "recipientName") String recipientName
                         );
 
-    Message findTopByChatId(String chatId);
+    @Transactional // By default (readOnly = false)
+    @Modifying
+    @Query("update Message u set u.status = :status where u.conversation.idConversation = :idConversation and u.recipientName = :recipientName")
+    void updateMessagesByConversation(@Param(value = "status") MessageStatus status,
+                        @Param(value = "idConversation") String idConversation,
+                        @Param(value = "recipientName") String recipientName
+    );
+
+    //Message findTopByChatId(String chatId);
+
     //Message findDistinctByChatId(String chatId);
 
     //@Query("select u.username from User u inner join u.events ar where ar.idEvent = :idEvent")
     List<Message> findAllByConversation(Conversation conversation);
-
-    boolean existsDistinctByChatId(String chatId);
 }

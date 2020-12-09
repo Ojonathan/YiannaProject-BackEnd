@@ -60,14 +60,14 @@ public class EventRestController {
         }
     }
 
-    // Get all events using Principal
-    @GetMapping("/me")
-    public ResponseEntity<?> getAllMyEvents(Principal user) {
+    // Get all events using Principal or username PathVariable
+    @GetMapping("/user/{username}")
+    public ResponseEntity<?> getAllMyEvents(@PathVariable("username") String username, Principal user) {
         try {
             // Récupérer le client à partir du contexte de sécurité (via le raccourci principal) et lui ajouter l'offre
-            String me = user.getName();
+            //String me = user.getName();
 
-            List<Event> events = eventService.getAllEventsForUser(me);
+            List<Event> events = eventService.getAllEventsForUser(username);
             return (events == null)?
                     new ResponseEntity<>(HttpStatus.NOT_FOUND):
                     new ResponseEntity<List<Event>>(events, HttpStatus.OK);

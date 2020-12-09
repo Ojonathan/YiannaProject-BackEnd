@@ -36,10 +36,6 @@ public class Event {
     @JsonIgnore
     private List<Conversation> conversations;
 
-    //@OneToMany(mappedBy = "event")
-    //@JsonIgnore
-    //private List<Message> messages;
-
     public Event(String name, String description, boolean carAvailable){
         this.name = name;
         this.description = description;

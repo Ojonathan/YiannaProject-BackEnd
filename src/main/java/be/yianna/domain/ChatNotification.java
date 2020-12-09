@@ -11,5 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChatNotification {
     private Long idChatNotif;
+    private String idConversation;
     private String senderName;
 }

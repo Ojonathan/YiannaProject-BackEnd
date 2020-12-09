@@ -1,8 +1,10 @@
 package be.yianna.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Set;
 @Entity
 @Setter
 @Getter
+@ToString
 public class User {
 
     @Id
@@ -20,11 +23,12 @@ public class User {
     @Column(unique = true)
     private String username;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String description;
     private Integer age;
+    private String email;
     // can I include avatar and email
 
     @ManyToMany(fetch = FetchType.EAGER)

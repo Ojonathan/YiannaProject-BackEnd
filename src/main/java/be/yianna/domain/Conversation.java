@@ -10,21 +10,26 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Conversation {
     @Id
+    @Column(unique = true)
     private String idConversation;
+
+    private String senderName;
+    private String recipientName;
 
     @ManyToOne
     @JsonIgnore
     private Event event;
 
     @OneToMany(mappedBy = "conversation")
+    @JsonIgnore
     private List<Message> messages;
 
-    private String senderName;
-    private String recipientName;
+    public Conversation(String idConversation){
+        this.idConversation = idConversation;
+    }
 }

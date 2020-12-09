@@ -15,10 +15,6 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idMessage;
 
-    private String chatId;
-
-    //private Long senderId;
-    //private Long recipientId;
     private String senderName;
     private String recipientName;
 
@@ -26,13 +22,10 @@ public class Message {
     private LocalDateTime timestamp;
 
     @Enumerated(EnumType.ORDINAL)
+    @JsonIgnore
     private MessageStatus status; //enum in DataBase
 
     @ManyToOne
     @JsonIgnore
     private Conversation conversation;
-
-    //@ManyToOne
-    //@JsonIgnore
-    //private Event event;
 }

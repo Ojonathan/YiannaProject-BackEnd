@@ -1,5 +1,6 @@
 package be.yianna.rest;
 
+import be.yianna.domain.Message;
 import be.yianna.domain.Role;
 import be.yianna.domain.User;
 import be.yianna.repository.RoleRepository;
@@ -34,13 +35,11 @@ public class UserRestController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
-        // LOGGER.info(">>>>> RECU The username " + client.getUsername() + " - "+client.getPassword());
         try {
             User resultUser = userRepository.findByUsername(user.getUsername());
 
             // verify if username is already in database
             if (resultUser != null) {
-                //LOGGER.info("The username " + client.getUsername() + " is already taken !");
                 return new ResponseEntity<String>("Username already taken: ", HttpStatus.CONFLICT);
 
             } else {
@@ -51,15 +50,23 @@ public class UserRestController {
                 //user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
                 user.setRoles(new HashSet<>(Arrays.asList(role1)));
                 userRepository.save(user);
-                //LOGGER.info("The username " + client.getUsername() + " has been added to the database !");
-
                 return new ResponseEntity<String>("Success de l'enregistrement", HttpStatus.CREATED);
-
             }
         } catch (Exception ex) {
             return new ResponseEntity<String>("Erreur lors de l'enregistrement : " + ex.getMessage(), HttpStatus.CONFLICT);
         }
     }
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
+        try{
+            User user = userRepository.findByUsername(username);
+            return new ResponseEntity<User>(user, HttpStatus.OK);
+        }catch (Exception ex) {
+            return new ResponseEntity<String>("user not found : " + ex.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @DeleteMapping("/user/{id}")
     //@PreAuthorize("hasAuthority('ADMIN')")
