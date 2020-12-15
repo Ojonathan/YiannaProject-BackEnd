@@ -1,25 +1,17 @@
 package be.yianna;
 
-import be.yianna.domain.Event;
-import be.yianna.domain.EventType;
-import be.yianna.domain.Role;
-import be.yianna.domain.User;
+import be.yianna.domain.*;
 import be.yianna.repository.EventRepository;
 import be.yianna.repository.EventTypeRepository;
-import be.yianna.repository.RoleRepository;
+import be.yianna.repository.AuthorityRepository;
 import be.yianna.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 @SpringBootApplication
 public class YiannaprojectApplication {
@@ -30,57 +22,77 @@ public class YiannaprojectApplication {
 
     @Bean
     CommandLineRunner runIt(UserRepository userRepository,
-                            RoleRepository roleRepo,
+                            AuthorityRepository authorityRepository,
                             EventRepository eventRepository,
                             EventTypeRepository eventTypeRepository) {
         return args -> {
             try {
-                User client1 = new User("user1", "password", null);
-                User client2 = new User("user2", "password", null);
-                User client4 = new User("user4", "password", null);
-                User client3 = new User("user3", "password", null);
+                User user1 = new User("joeyjofer08", "$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC", "https://randomuser.me/api/portraits/men/57.jpg",null);
+                User user2 = new User("tiffany", "$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC", "https://randomuser.me/api/portraits/women/64.jpg",null);
+                User user3 = new User("admin", "$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxjk1RGshxqZc8fLZv7N9Ncy21tRRKUOoaBQ&usqp=CAU",null);
+                User user4 = new User("mathile09", "$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC", "https://randomuser.me/api/portraits/men/54.jpg",null);
 
-                Role role1 = new Role("USER", new HashSet<>(Arrays.asList(client1, client2, client4)));
-                Role role2 = new Role("ADMIN", new HashSet<>(Arrays.asList(client3)));
+                Authority authority1 = new Authority(AuthorityName.USER);
+                Authority authority2 = new Authority(AuthorityName.ADMIN);
 
-                client1.setRoles(new HashSet<>(Arrays.asList(role1)));
-                client2.setRoles(new HashSet<>(Arrays.asList(role2)));
-                client3.setRoles(new HashSet<>(Arrays.asList(role2)));
-                client4.setRoles(new HashSet<>(Arrays.asList(role1)));
+                user1.setAuthorities(Arrays.asList(authority1));
+                user2.setAuthorities(Arrays.asList(authority1));
+                user3.setAuthorities(Arrays.asList(authority2));
+                user4.setAuthorities(Arrays.asList(authority1));
 
-                roleRepo.saveAll(Arrays.asList(role1,role2));
-                userRepository.saveAll(Arrays.asList(client1, client2, client3, client4));
+                authorityRepository.saveAll(Arrays.asList(authority1,authority2));
+                userRepository.saveAll(Arrays.asList(user1, user2, user3, user4));
 
                 EventType type1 = new EventType("Music");
                 EventType type2 = new EventType("Art");
                 EventType type3 = new EventType("Science");
-                eventTypeRepository.saveAll(Arrays.asList(type1,type2,type3));
+                EventType type4 = new EventType("Travel");
 
-                Event event1 = new Event("Linkin Park Concert","Palais 12", true);
-                event1.setUser(client1);
+                eventTypeRepository.saveAll(Arrays.asList(type1,type2,type3,type4));
+
+                Event event1 = new Event("Linkin Park Concert"
+                        ,"J'ai un deuxième billet pour le concert du parc Linkin à Bruxelles, quelqu'un veut y aller, les boissons sont pour moi"
+                        ,"Palais 12, Bruxelles"
+                        , "https://timesofsandiego.com/wp-content/uploads/2017/07/Linkin_Park_Logo_y_Mienbros.jpg"
+                        ,true);
+                event1.setUser(user1);
                 event1.setType(type1);
 
-                Event event2 = new Event("One Republic Concert","Palais 12", true);
-                event2.setUser(client1);
+                Event event2 = new Event("One Republic Concert"
+                        ,"Je forme un groupe pour assister à ce concert si vous êtes intéressés écrivez-moi "
+                        ,"Palais 12"
+                        ,"https://s1.ticketm.net/dam/a/a9d/a44f24cb-2e36-4b99-85a3-57c9adb9da9d_1302501_RETINA_PORTRAIT_16_9.jpg"
+                        , true);
+                event2.setUser(user1);
                 event2.setType(type1);
 
-                Event event3 = new Event("Lab Expo","Tour and taxis ", false);
-                event3.setUser(client2);
+                Event event3 = new Event("Made in Asia"
+                        ,"Qui veut faire du cosplay, j'irai avec mes amis mais si quelqu'un veut être invité"
+                        ,"Tour & taxis, Bruxelles"
+                        ,"https://www.madeinasia.be/wp-content/uploads/sites/62/2019/12/MIA20-Websitebanner-RGB.jpg"
+                        , false);
+                event3.setUser(user2);
                 event3.setType(type3);
 
-                Event event4 = new Event("Japan Art","Fine Arts Brussels", false);
-                event4.setUser(client2);
+                Event event4 = new Event("Dali Exhibition"
+                        ,"Ce 10 février prochain s'ouvre l'exposition d'art de Dali, qui veut venir admirer son art ?"
+                        ,"Fine Arts Brussels"
+                        ,"https://cartoon-productions.be/wp-content/uploads/2019/06/f39e3332e0fa56dba61554f27b890961.png"
+                        , false);
+                event4.setUser(user2);
                 event4.setType(type2);
 
-                Event event5 = new Event("Technopolis","Machelen", true);
-                event5.setUser(client4);
+                Event event5 = new Event("Technopolis"
+                        ,"Ce week-end, si vous voulez aller à Technopolis, il y aura un séminaire sur les nouvelles technologies, vous êtes tous invités"
+                        ,"Machelen"
+                        ,"https://cdn2.cheeseweb.eu/wp-content/uploads/2014/07/Entrance.jpg", true);
+                event5.setUser(user4);
                 event5.setType(type3);
 
                 eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5));
 
                 System.out.println("Fin de l'initialisation par CommandLineRunner ...");
             } catch (Exception ex) {
-                //LOGGER.error("Exception rencontrée lors de l'initialisation par CommandLineRunner : "+ex);
             }
         };
     }

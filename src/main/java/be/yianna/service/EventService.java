@@ -1,7 +1,7 @@
 package be.yianna.service;
 
+import be.yianna.domain.AuthorEvent;
 import be.yianna.domain.Event;
-import be.yianna.domain.EventType;
 
 import java.util.List;
 
@@ -14,5 +14,5 @@ public interface EventService {
 
     void deleteEventById(Long id);
 
-    String getAuthor(Long idEvent);
+    AuthorEvent getAuthor(Long idEvent);
 }

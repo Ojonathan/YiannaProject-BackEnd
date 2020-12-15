@@ -1,17 +1,16 @@
 package be.yianna.service;
 
 import be.yianna.domain.Conversation;
-import be.yianna.domain.Event;
 import be.yianna.domain.Message;
 import be.yianna.domain.MessageStatus;
 import be.yianna.repository.ConversationRepository;
 import be.yianna.repository.EventRepository;
 import be.yianna.repository.MessageRepository;
+import be.yianna.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -23,6 +22,9 @@ public class MessageService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /*public Optional<String> getChatId(String senderName, String recipientName, Long eventId, boolean createIfNotExist) {
         // check if a chatId exists, otherwise use createIfNoExist to create new chatId
@@ -43,23 +45,27 @@ public class MessageService {
     }*/
 
     public Conversation getConversation(String senderName, String recipientName, Long eventId) {
-        String generatedChatId = String.format("%s_%s_%s", eventId, senderName, recipientName);
-        if(conversationRepository.existsByIdConversation(generatedChatId)){
-            return conversationRepository.findByIdConversation(generatedChatId);
-        } else {
-            generatedChatId = String.format("%s_%s_%s", eventId, recipientName, senderName);
-            if(conversationRepository.existsByIdConversation(generatedChatId)){
+        // check if event exists
+        //if (eventRepository.existsById(eventId)){
+            String generatedChatId = String.format("%s_%s_%s", eventId, senderName, recipientName);
+            if (conversationRepository.existsByIdConversation(generatedChatId)) {
                 return conversationRepository.findByIdConversation(generatedChatId);
             } else {
-                // create conversation
-                Conversation conversation = new Conversation(generatedChatId);
-                conversation.setEvent(eventRepository.findByIdEvent(eventId));
-                conversation.setSenderName(senderName);
-                conversation.setRecipientName(recipientName);
-                conversationRepository.save(conversation);
-                return conversationRepository.findByIdConversation(generatedChatId);
+                generatedChatId = String.format("%s_%s_%s", eventId, recipientName, senderName);
+                if (conversationRepository.existsByIdConversation(generatedChatId)) {
+                    return conversationRepository.findByIdConversation(generatedChatId);
+                } else {
+                    // create conversation
+                    Conversation conversation = new Conversation(generatedChatId);
+                    conversation.setEvent(eventRepository.findByIdEvent(eventId));
+                    conversation.setSenderName(senderName);
+                    conversation.setRecipientName(recipientName);
+                    conversationRepository.save(conversation);
+                    return conversationRepository.findByIdConversation(generatedChatId);
+                }
             }
-        }
+        //}
+        //return null;
     }
 
     public Message save(Message message) {
@@ -112,7 +118,36 @@ public class MessageService {
     }
 
     public List<Conversation> getUserConversations(String userName){
+        String contactUserName;
+        String contactAvatar;
+        String currentEventTitle;
+
+        String [] splitedConversation;
+
+        List<Conversation> conversations = conversationRepository.findAllBySenderNameOrRecipientName(userName,userName);
+
+        for (Conversation conversation:conversations) {
+            //split user conversation
+            splitedConversation = conversation.getIdConversation().split("_");
+
+            currentEventTitle = eventRepository.getEventTitle(Long.valueOf(splitedConversation[0]));
+
+            if(splitedConversation[1] == userName){
+                contactUserName = splitedConversation[2];
+            }else{
+                contactUserName = splitedConversation[1];
+            }
+            contactAvatar = userRepository.getUserAvatar(contactUserName);
+
+            //push object
+        }
+        //return myList;
+
         return conversationRepository.findAllBySenderNameOrRecipientName(userName,userName);
+    }
+
+    public String getConversationEventTitle(Long idEvent){
+        return eventRepository.getEventTitle(idEvent);
     }
 
     public void updateMessagesByConversation(MessageStatus status, String idConversation, String recipientName){

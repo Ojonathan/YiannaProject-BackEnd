@@ -1,5 +1,6 @@
 package be.yianna.rest;
 
+import be.yianna.domain.AuthorEvent;
 import be.yianna.domain.ChatNotification;
 import be.yianna.domain.Conversation;
 import be.yianna.domain.Message;
@@ -12,8 +13,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
 
 import java.util.Optional;
 
@@ -79,15 +80,31 @@ public class MessageRestController {
 
     // get total number of messages revieved for a conversation
     @GetMapping("/messages/user/{recipientName}/count")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<Long> countNewMessagesTotal(@PathVariable String recipientName) {
         return ResponseEntity
                 .ok(messageService.countNewMessagesTotal(recipientName));
     }
 
     @GetMapping("/conversations/user/{userName}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> getUserConversations(@PathVariable String userName) {
         return ResponseEntity
                 .ok(messageService.getUserConversations(userName));
+    }
+
+    @GetMapping("/conversations/event/{idEvent}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public ResponseEntity<?> getConversationEventTitle(@PathVariable("idEvent") Long idEvent){
+        try {
+            String EventTitle = messageService.getConversationEventTitle(idEvent);
+            return (EventTitle == null)?
+                    new ResponseEntity<>(HttpStatus.NOT_FOUND):
+                    new ResponseEntity<String>(EventTitle, HttpStatus.OK);
+
+        } catch (Exception ex) {
+            return new ResponseEntity<String>("Erreur lors de la recuperation du titre de l'evenement pour une conversation : " + ex.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     // get all messages by Conversation(by eventId, senderId, recipientId)
@@ -101,6 +118,7 @@ public class MessageRestController {
     }*/
 
     @GetMapping(value = "/conversations/{idConversation}/messages")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> findChatMessages( @PathVariable String idConversation,
                                                @RequestParam("recipientName")String recipientName) {
         return ResponseEntity
@@ -109,6 +127,7 @@ public class MessageRestController {
 
     // get a specific message and change its status value to DELIVERED
     @GetMapping("/messages/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> findMessage ( @PathVariable Long id) {
         try{
             Message msg = messageService.findById(id);

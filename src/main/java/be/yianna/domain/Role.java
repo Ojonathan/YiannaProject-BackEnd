@@ -7,7 +7,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Set;
 
-@Entity
+public class Role {
+}
+/*@Entity
 @Setter
 @Getter
 public class Role {
@@ -21,13 +23,13 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<User> users;
+    private Set<User_> users;
 
     public Role() {
 	}
 
-    public Role(String role, Set<User> users) {
+    public Role(String role, Set<User_> users) {
 		this.role = role;
 		this.users = users;
 	}
-}
+}*/

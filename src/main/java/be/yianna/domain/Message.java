@@ -21,7 +21,7 @@ public class Message {
     private String content;
     private LocalDateTime timestamp;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @JsonIgnore
     private MessageStatus status; //enum in DataBase
 

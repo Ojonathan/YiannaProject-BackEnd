@@ -1,18 +1,20 @@
 package be.yianna.rest;
 
+import be.yianna.domain.AuthorEvent;
 import be.yianna.domain.Event;
 import be.yianna.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
 @RestController
-@CrossOrigin // possible to specify settings
+@CrossOrigin(origins = "*")
 @RequestMapping("/events")
 public class EventRestController {
 
@@ -25,6 +27,7 @@ public class EventRestController {
 
     // TODO to improve and make it compatible with pagging
     @GetMapping
+    //@PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public List<Event> findAll() {
         return eventService.getAllEvents();
     }
@@ -78,22 +81,21 @@ public class EventRestController {
     }
 
     @GetMapping(value = "/{idEvent}/author")
+    //@PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> getAuthor(@PathVariable("idEvent") Long idEvent){
         try {
-            String author = eventService.getAuthor(idEvent);
+            AuthorEvent author = eventService.getAuthor(idEvent);
             return (author == null)?
                     new ResponseEntity<>(HttpStatus.NOT_FOUND):
-                    new ResponseEntity<String>(author, HttpStatus.OK);
+                    new ResponseEntity<AuthorEvent>(author, HttpStatus.OK);
 
         } catch (Exception ex) {
-            return new ResponseEntity<String>("Erreur lors de la recuperation de mes evenements : " + ex.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("Erreur lors de la recuperation de mon auteur : " + ex.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
-
-    // Only Admin can delete Event
     @DeleteMapping("/{id}" )
-    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
         try{
             eventService.deleteEventById(id);
@@ -102,4 +104,6 @@ public class EventRestController {
             return new ResponseEntity<String>("Erreur lors de la suppresion d'un événement : " + ex.getMessage(), HttpStatus.CONFLICT);
         }
     }
+
+
 }

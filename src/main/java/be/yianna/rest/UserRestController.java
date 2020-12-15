@@ -1,20 +1,27 @@
 package be.yianna.rest;
 
-import be.yianna.domain.Message;
+import be.yianna.domain.Authority;
+import be.yianna.domain.AuthorityName;
 import be.yianna.domain.Role;
 import be.yianna.domain.User;
-import be.yianna.repository.RoleRepository;
+import be.yianna.repository.AuthorityRepository;
 import be.yianna.repository.UserRepository;
-import org.springframework.beans.factory.BeanFactory;
+import be.yianna.security.JwtTokenUtil;
+import be.yianna.security.JwtUser;
+import be.yianna.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -22,18 +29,41 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin // possible to specify settings
+//@PreAuthorize("permitAll()")
 public class UserRestController {
 
     private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private AuthorityRepository authorityRepository;
 
-    public UserRestController(UserRepository userRepository,
-                              RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository =  roleRepository;
+    @Value("${jwt.header}")
+    private String tokenHeader;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    @Qualifier("jwtUserDetailsService")
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private UserService userService;
+
+    //@RequestMapping(value = "user", method = RequestMethod.GET)
+    @GetMapping("/user")
+    public JwtUser getAuthenticatedUser(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader).substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
+        return user;
     }
 
-    @PostMapping("/register")
+    public UserRestController(UserRepository userRepository,
+                              AuthorityRepository authorityRepository) {
+        this.userRepository = userRepository;
+        this.authorityRepository =  authorityRepository;
+    }
+
+    @PostMapping(value = "${jwt.route.registration.path}")
     public ResponseEntity<String> register(@RequestBody User user) {
         try {
             User resultUser = userRepository.findByUsername(user.getUsername());
@@ -44,11 +74,13 @@ public class UserRestController {
 
             } else {
                 // - add user to Database
-                Role role1 = roleRepository.findByRole("USER");
+                Authority authority = authorityRepository.findByName(AuthorityName.USER);
                 //new Role("USER", new HashSet<>(Arrays.asList(user)));
-                user.setPassword(user.getPassword());
-                //user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-                user.setRoles(new HashSet<>(Arrays.asList(role1)));
+                //user.setPassword(user.getPassword());
+
+                user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+                user.setEnabled(true);
+                user.setAuthorities(Arrays.asList(authority));
                 userRepository.save(user);
                 return new ResponseEntity<String>("Success de l'enregistrement", HttpStatus.CREATED);
             }
@@ -67,9 +99,23 @@ public class UserRestController {
         }
     }
 
+    @GetMapping("/user/{username}/avatar")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public ResponseEntity<?> getUserAvatar(@PathVariable("username") String username){
+        try {
+            String avatar = userRepository.getUserAvatar(username);
+            return (avatar == null)?
+                    new ResponseEntity<>(HttpStatus.NOT_FOUND):
+                    new ResponseEntity<String>(avatar, HttpStatus.OK);
+
+        } catch (Exception ex) {
+            return new ResponseEntity<String>("Error finding user avatart : " + ex.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
 
     @DeleteMapping("/user/{id}")
-    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
         try {
             Optional<User> resultUser = userRepository.findById(id);
@@ -87,17 +133,20 @@ public class UserRestController {
         }
     }
 
-    /*@GetMapping("/checklogin")
-    public ResponseEntity<?> login(Principal user) {
-
-        if (user != null)
-            return new ResponseEntity<String>(user.getName() + ": Authenticated successfully", HttpStatus.OK);
-        else
-            return new ResponseEntity<String>("Please add your basic token in the Authorization Header",
-                    HttpStatus.UNAUTHORIZED);
-    }*/
+    @PutMapping("/user")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public ResponseEntity<String> updateUser(@RequestBody User user) {
+        try {
+            // UPDATE
+            userService.patch(user);
+            return new ResponseEntity<String>("Success de la suppresion l'enregistrement", HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            return new ResponseEntity<String>("Erreur lors de l'enregistrement : " + ex.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
 
     @GetMapping("/checklogin")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<User> findAll() {
         return userRepository.findAll();
     }

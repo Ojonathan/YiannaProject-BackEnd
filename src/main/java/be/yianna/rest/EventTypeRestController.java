@@ -7,12 +7,13 @@ import be.yianna.service.EventTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin // possible to specify settings
+@CrossOrigin(origins = "*")
 @RequestMapping("/event_types")
 public class EventTypeRestController {
 
@@ -38,7 +39,6 @@ public class EventTypeRestController {
     public List<Event> findAllByEventType(@PathVariable("idEventType") Long idEventType){
         return eventService.getAllEventsByEventType(idEventType);
     }
-
 
     // Add new event type
     @PostMapping

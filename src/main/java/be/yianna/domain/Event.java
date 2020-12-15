@@ -19,10 +19,12 @@ public class Event {
 
     private String name;
     private String description;
+    private String place;
+    private String picture;
     private boolean carAvailable;
 
-    @Lob
-    private byte[] picture;
+    //@Lob
+    //private byte[] picture;
     // Can I include image and date
 
     @ManyToOne
@@ -36,10 +38,13 @@ public class Event {
     @JsonIgnore
     private List<Conversation> conversations;
 
-    public Event(String name, String description, boolean carAvailable){
+    public Event(String name, String description, String place, String picture, boolean carAvailable){
         this.name = name;
         this.description = description;
+        this.place = place;
+        this.picture = picture;
         this.carAvailable = carAvailable;
+
     }
 
 

@@ -1,5 +1,6 @@
 package be.yianna.service;
 
+import be.yianna.domain.AuthorEvent;
 import be.yianna.domain.Event;
 import be.yianna.domain.EventType;
 import be.yianna.domain.User;
@@ -28,23 +29,19 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void addEvent(String username, Event event) {
-        try {
-            // Retrieve the user
-            User user = userRepo.findByUsername(username);
+        // Retrieve the user
+        User user = userRepo.findByUsername(username);
 
-            // Add the new event to the user's list of events
-            List<Event> eventsuser = user.getEvents();
-            eventsuser.add(event);
-            user.setEvents(eventsuser);
+        // Add the new event to the user's list of events
+        List<Event> eventsuser = user.getEvents();
+        eventsuser.add(event);
+        user.setEvents(eventsuser);
 
-            // Add the user who published the event
-            event.setUser(user);
+        // Add the user who published the event
+        event.setUser(user);
 
-            // Add the user who published the event
-            eventRepo.save(event);
-        } catch (Exception ex) {
-
-        }
+        // Add the user who published the event
+        eventRepo.save(event);
     }
 
     // TODO to improve and make it compatible with pagging
@@ -93,7 +90,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public String getAuthor(Long idEvent){
+    public AuthorEvent getAuthor(Long idEvent){
         return eventRepo.getAuthorEvent(idEvent);
     }
 
