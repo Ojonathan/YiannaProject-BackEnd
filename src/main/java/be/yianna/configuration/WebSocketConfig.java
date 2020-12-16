@@ -1,6 +1,7 @@
 package be.yianna.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
@@ -17,6 +18,9 @@ import java.util.List;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    @Value("${websocket.url}")
+    private String url;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -35,9 +39,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Handshake endpoint
+
+
         registry
                 .addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:4200")
+                .setAllowedOrigins(url)
                 .withSockJS();
     }
 }
