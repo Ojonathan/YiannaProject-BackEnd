@@ -18,6 +18,7 @@ public class YiannaprojectApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(YiannaprojectApplication.class, args);
+        
     }
 
     @Bean
