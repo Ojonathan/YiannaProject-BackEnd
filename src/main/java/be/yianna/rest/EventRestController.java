@@ -27,7 +27,6 @@ public class EventRestController {
 
     // TODO to improve and make it compatible with pagging
     @GetMapping
-    //@PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public List<Event> findAll() {
         return eventService.getAllEvents();
     }
@@ -35,6 +34,7 @@ public class EventRestController {
 
     // Add new event using Principal
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> addEvent(@RequestBody Event event,
                                       Principal user) {
         try{
@@ -50,6 +50,7 @@ public class EventRestController {
 
     // Add new event
     @PostMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> addEvent(@RequestBody Event event,
                                       @PathVariable("username") String username) {
         try{
@@ -65,6 +66,7 @@ public class EventRestController {
 
     // Get all events using Principal or username PathVariable
     @GetMapping("/user/{username}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> getAllMyEvents(@PathVariable("username") String username, Principal user) {
         try {
             // Récupérer le client à partir du contexte de sécurité (via le raccourci principal) et lui ajouter l'offre
@@ -81,7 +83,6 @@ public class EventRestController {
     }
 
     @GetMapping(value = "/{idEvent}/author")
-    //@PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> getAuthor(@PathVariable("idEvent") Long idEvent){
         try {
             AuthorEvent author = eventService.getAuthor(idEvent);

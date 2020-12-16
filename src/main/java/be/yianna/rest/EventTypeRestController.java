@@ -42,7 +42,7 @@ public class EventTypeRestController {
 
     // Add new event type
     @PostMapping
-    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> addEventType(@RequestBody EventType eventType) {
         try{
             eventTypeService.addEventType(eventType);
@@ -54,7 +54,7 @@ public class EventTypeRestController {
 
     // Only Admin can delete Event
     @DeleteMapping("/{id}" )
-    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
         try{
             eventTypeService.deleteEventTypeById(id);

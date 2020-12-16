@@ -90,6 +90,7 @@ public class UserRestController {
     }
 
     @GetMapping("/user/{username}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
         try{
             User user = userRepository.findByUsername(username);
