@@ -1,5 +1,6 @@
-package be.yianna.security;
+package be.yianna.security.filter;
 
+import be.yianna.security.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

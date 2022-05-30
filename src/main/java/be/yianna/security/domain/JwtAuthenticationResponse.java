@@ -1,4 +1,4 @@
-package be.yianna.security.service;
+package be.yianna.security.domain;
 
 import java.io.Serializable;
 

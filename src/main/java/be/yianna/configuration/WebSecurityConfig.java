@@ -1,7 +1,7 @@
 package be.yianna.configuration;
 
-import be.yianna.security.JwtAuthenticationEntryPoint;
-import be.yianna.security.JwtAuthorizationTokenFilter;
+import be.yianna.security.filter.JwtAuthenticationEntryPoint;
+import be.yianna.security.filter.JwtAuthorizationTokenFilter;
 import be.yianna.security.service.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

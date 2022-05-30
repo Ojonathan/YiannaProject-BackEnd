@@ -1,9 +1,10 @@
 package be.yianna.security.controller;
 
-import be.yianna.security.JwtAuthenticationRequest;
+import be.yianna.security.domain.JwtAuthenticationRequest;
 import be.yianna.security.JwtTokenUtil;
 import be.yianna.security.JwtUser;
-import be.yianna.security.service.JwtAuthenticationResponse;
+import be.yianna.security.domain.JwtAuthenticationResponse;
+import be.yianna.security.exception.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

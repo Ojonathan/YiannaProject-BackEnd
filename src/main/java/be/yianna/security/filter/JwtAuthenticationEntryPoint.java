@@ -1,4 +1,4 @@
-package be.yianna.security;
+package be.yianna.security.filter;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
