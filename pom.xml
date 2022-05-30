@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>be.yianna</groupId>
-    <artifactId>yiannaproject</artifactId>
+    <artifactId>yianna-project-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>yiannaproject</name>
+    <name>yianna-project-backend</name>
     <description>project for Spring Boot</description>
 
     <properties>
